@@ -1,3 +1,5 @@
+using ConnectPro.Services;
+using ConnectPro.Services.Interfaces;
 using ContactPro.Data;
 using ContactPro.Models;
 using Microsoft.AspNetCore.Identity;
@@ -16,6 +18,9 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+// Custom Services
+builder.Services.AddScoped<IImageService, ImageService>(); // create a new ImageService class on every request
 
 var app = builder.Build();
 
