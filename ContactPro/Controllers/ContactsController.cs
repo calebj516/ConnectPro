@@ -88,7 +88,7 @@ namespace ContactPro.Controllers
             else
             {
                 contacts = appUser.Contacts
-                                  .Where(c => c.FullName!.ToLower().Contains(searchString.ToLower()) )
+                                  .Where(c => c.FullName!.ToLower().Contains(searchString.ToLower()))
                                   .OrderBy(c => c.LastName)
                                   .ThenBy(c => c.FirstName)
                                   .ToList();
@@ -150,7 +150,7 @@ namespace ContactPro.Controllers
                     contact.BirthDate = DateTime.SpecifyKind(contact.BirthDate, DateTimeKind.Utc);
                 }
 
-                if(contact.ImageFile != null)
+                if (contact.ImageFile != null)
                 {
                     contact.ImageData = await _imageService.ConvertFileToByteArrayAsync(contact.ImageFile);
                     contact.ImageType = contact.ImageFile.ContentType;
@@ -202,7 +202,7 @@ namespace ContactPro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,AppUserId,FirstName,LastName,BirthDate,Address1,Address2,City,State,ZipCode,Email,PhoneNumber,Created,ImageData,ImageType")] Contact contact)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,AppUserId,FirstName,LastName,BirthDate,Address1,Address2,City,State,ZipCode,Email,PhoneNumber,Created,ImageFile,ImageData,ImageType")] Contact contact)
         {
             if (id != contact.Id)
             {
@@ -215,9 +215,15 @@ namespace ContactPro.Controllers
                 {
                     contact.Created = DateTime.SpecifyKind(contact.Created, DateTimeKind.Utc);
 
-                    if(contact.BirthDate != null)
+                    if (contact.BirthDate != null)
                     {
                         contact.BirthDate = DateTime.SpecifyKind(contact.BirthDate, DateTimeKind.Utc);
+                    }
+
+                    if (contact.ImageFile != null)
+                    {
+                        contact.ImageData = await _imageService.ConvertFileToByteArrayAsync(contact.ImageFile);
+                        contact.ImageType = contact.ImageFile.ContentType;
                     }
 
                     _context.Update(contact);
@@ -274,14 +280,14 @@ namespace ContactPro.Controllers
             {
                 _context.Contacts.Remove(contact);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ContactExists(int id)
         {
-          return _context.Contacts.Any(e => e.Id == id);
+            return _context.Contacts.Any(e => e.Id == id);
         }
     }
 }
