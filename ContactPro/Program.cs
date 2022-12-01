@@ -1,8 +1,10 @@
+using ConnectPro.Models;
 using ConnectPro.Services;
 using ConnectPro.Services.Interfaces;
 using ContactPro.Data;
 using ContactPro.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +24,10 @@ builder.Services.AddControllersWithViews();
 // Custom Services
 builder.Services.AddScoped<IImageService, ImageService>(); // create a new ImageService class on every request
 builder.Services.AddScoped<IAddressBookService, AddressBookService>();
+builder.Services.AddScoped<IEmailSender, EmailService>();
+
+// With this line we are feeding the MailSettings class the information it needs from our user secrets file
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
 var app = builder.Build();
 
