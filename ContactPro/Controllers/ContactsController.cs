@@ -13,6 +13,7 @@ using ContactPro.Enums;
 using ConnectPro.Services.Interfaces;
 using ConnectPro.Models;
 using ConnectPro.Models.ViewModels;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace ContactPro.Controllers
 {
@@ -22,22 +23,27 @@ namespace ContactPro.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IImageService _imageService;
         private readonly IAddressBookService _addressBookService;
+        private readonly IEmailSender _emailService;
 
         public ContactsController(ApplicationDbContext context,
                                   UserManager<AppUser> userManager,
                                   IImageService imageService,
-                                  IAddressBookService addressBookService)
+                                  IAddressBookService addressBookService,
+                                  IEmailSender emailService)
         {
             _context = context;
             _userManager = userManager;
             _imageService = imageService;
             _addressBookService = addressBookService;
+            _emailService = emailService;
         }
 
         // GET: Contacts
         [Authorize]
-        public IActionResult Index(int categoryId)
+        public IActionResult Index(int categoryId, string swalMessage = null)
         {
+            ViewData["SwalMessage"] = swalMessage;
+
             var contacts = new List<Contact>();
             string appUserId = _userManager.GetUserId(User);
 
@@ -106,7 +112,7 @@ namespace ContactPro.Controllers
         {
             string appUserId = _userManager.GetUserId(User);
             Contact contact = await _context.Contacts.Where(c => c.Id == id && c.AppUserId == appUserId)
-                                                     .FirstOrDefaultAsync();
+                                                     .FirstOrDefaultAsync()!;
             if(contact == null)
             {
                 return NotFound();
@@ -126,6 +132,27 @@ namespace ContactPro.Controllers
             };
 
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EmailContact(EmailContactViewModel ecvm)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Send email
+                    await _emailService.SendEmailAsync(ecvm.EmailData.EmailAddress, ecvm.EmailData.Subject, ecvm.EmailData.Body);
+                    return RedirectToAction("Index", "Contacts", new { swalMessage = "Success: Email Sent!" });
+                }
+                catch
+                {
+                    return RedirectToAction("Index", "Contacts", new { swalMessage = "Error: Email Send Failed!" });
+                    throw;
+                }
+            }
+
+            return View(ecvm);
         }
 
         // GET: Contacts/Details/5
