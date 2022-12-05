@@ -1,4 +1,5 @@
-﻿using ContactPro.Models;
+﻿using ConnectPro.Models;
+using ContactPro.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -21,6 +22,25 @@ namespace ContactPro.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        [Route("/Home/HandleError/{code:int}")]
+        public IActionResult HandleError(int code)
+        {
+            var customError = new CustomError();
+
+            customError.Code = code;
+
+            if (code == 404)
+            {
+                customError.Message = "The page you are looking for may have been removed, had its name changed, or no longer be available.";
+            }
+            else
+            {
+                customError.Message = "Sorry, something went wrong.";
+            }
+
+            return View("~/Views/Shared/CustomError.cshtml", customError);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
