@@ -1,3 +1,4 @@
+using AspNetCore.ReCaptcha;
 using ConnectPro.Helpers;
 using ConnectPro.Models;
 using ConnectPro.Services;
@@ -7,6 +8,7 @@ using ContactPro.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,9 @@ builder.Services.AddScoped<IEmailSender, EmailService>();
 
 // With this line we are feeding the MailSettings class the information it needs from our user secrets file
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+
+// ReCaptcha
+builder.Services.AddReCaptcha(builder.Configuration.GetSection("ReCaptcha"));
 
 var app = builder.Build();
 var scope = app.Services.CreateScope();
