@@ -1,2 +1,2 @@
 # ConnectPro
-# Coder Foundry address book application
+Coder Foundry address book application
