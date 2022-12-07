@@ -28,10 +28,8 @@ builder.Services.AddControllersWithViews();
 // Custom Services
 builder.Services.AddScoped<IImageService, ImageService>(); // create a new ImageService class on every request
 builder.Services.AddScoped<IAddressBookService, AddressBookService>();
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings")); // With this line we are feeding the MailSettings class the information it needs from our user secrets file
 builder.Services.AddScoped<IEmailSender, EmailService>();
-
-// With this line we are feeding the MailSettings class the information it needs from our user secrets file
-builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
 // ReCaptcha
 builder.Services.AddReCaptcha(builder.Configuration.GetSection("ReCaptcha"));
