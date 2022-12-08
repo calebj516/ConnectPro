@@ -23,7 +23,6 @@ using AspNetCore.ReCaptcha;
 
 namespace ContactPro.Areas.Identity.Pages.Account
 {
-    [ValidateReCaptcha]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<AppUser> _signInManager;
